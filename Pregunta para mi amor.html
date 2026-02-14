@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>San Valentín</title>
+
+  <style>
+    body{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:100vh;
+      margin:0;
+      background:linear-gradient(135deg,#ff69b4,#ff1493);
+      font-family:Arial,sans-serif;
+      overflow:hidden;
+    }
+
+    .container{
+      text-align:center;
+      background:white;
+      padding:40px;
+      border-radius:20px;
+      box-shadow:0 10px 30px rgba(0,0,0,.3);
+      max-width:420px;
+      width:calc(100% - 40px);
+    }
+
+    h1{
+      color:#ff1493;
+      font-size:2em;
+      margin-bottom:30px;
+    }
+
+    .buttons{
+      display:flex;
+      gap:16px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+
+    button{
+      padding:15px 30px;
+      font-size:18px;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      transition:transform .25s ease, background .25s ease;
+      font-weight:bold;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    #btnSi{
+      background-color:#ff1493;
+      color:white;
+    }
+    #btnSi:hover{ transform:scale(1.06); }
+
+    #btnNo{
+      background-color:#808080;
+      color:white;
+    }
+    #btnNo:hover{ background-color:#555; }
+
+    .success{
+      color:#ff1493;
+      font-size:2em;
+      margin-top:10px;
+      animation:heartbeat .6s infinite;
+    }
+
+    @keyframes heartbeat{
+      0%,100%{ transform:scale(1); }
+      50%{ transform:scale(1.12); }
+    }
+
+    .confetti{
+      position:fixed;
+      width:10px;
+      height:14px;
+      top:-20px;
+      left:0;
+      opacity:.9;
+      animation:fall 1.8s linear forwards;
+      border-radius:3px;
+      pointer-events:none;
+    }
+
+    @keyframes fall{
+      to{ transform:translateY(110vh) rotate(720deg); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>¿Te gustaría ser mi San Valentín, mi amor hermoso?</h1>
+
+    <div class="buttons">
+      <button id="btnSi">Sí</button>
+      <button id="btnNo">No</button>
+    </div>
+
+    <div id="message"></div>
+  </div>
+
+  <script>
+    let siSize = 18;
+    let noCount = 0;
+
+    const btnSi = document.getElementById('btnSi');
+    const btnNo = document.getElementById('btnNo');
+    const buttons = document.querySelector('.buttons');
+    const title = document.querySelector('h1');
+    const message = document.getElementById('message');
+
+    const frasesNo = [
+      "¿Segura? 😳",
+      "Piénsalo bien 🙈",
+      "ya pueeees 😭",
+      "No te creo 😤",
+      "Ya casi dices que sí 😌",
+      "Ok… pero mírame 😶",
+      "Pliiiiiiiiis 😩",
+      "Última oportunidad 😅"
+    ];
+
+    function moverNo() {
+      // Pone el botón como "fixed" para poder moverlo por toda la pantalla
+      btnNo.style.position = 'fixed';
+
+      const padding = 20;
+      const maxX = window.innerWidth - btnNo.offsetWidth - padding;
+      const maxY = window.innerHeight - btnNo.offsetHeight - padding;
+
+      const x = Math.max(padding, Math.floor(Math.random() * maxX));
+      const y = Math.max(padding, Math.floor(Math.random() * maxY));
+
+      btnNo.style.left = x + 'px';
+      btnNo.style.top = y + 'px';
+    }
+
+    function crecerSi() {
+      siSize += 6;
+      btnSi.style.fontSize = siSize + 'px';
+      btnSi.style.padding = '15px ' + (30 + siSize / 2) + 'px';
+    }
+
+    function cambiarTextoNo() {
+      noCount++;
+      const idx = Math.min(noCount - 1, frasesNo.length - 1);
+      btnNo.textContent = frasesNo[idx];
+    }
+
+    function confettiBoom() {
+      for (let i = 0; i < 80; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = (Math.random() * 100) + 'vw';
+        c.style.background = `hsl(${Math.random() * 360}, 90%, 60%)`;
+        c.style.animationDuration = (1.2 + Math.random() * 1.4) + 's';
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 2600);
+      }
+    }
+
+    // PC: cuando el mouse se acerca
+    btnNo.addEventListener('mouseenter', () => {
+      moverNo();
+      crecerSi();
+      cambiarTextoNo();
+    });
+
+    // Celular: cuando intentan tocarlo
+    btnNo.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      moverNo();
+      crecerSi();
+      cambiarTextoNo();
+    }, { passive: false });
+
+    // Si aceptan
+    btnSi.addEventListener('click', () => {
+      confettiBoom();
+      buttons.style.display = 'none';
+      title.style.display = 'none';
+      message.innerHTML =
+        '<div class="success">¡Sí! ❤️<br>Esooo te amo mucho</div>' +
+        '<img src="https://tse4.mm.bing.net/th/id/OIP.KlT1QXHrgZnq0kArJhGniQHaG-?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3" style="max-width:300px;margin-top:20px;border-radius:10px;">';
+    });
+  </script>
+</body>
+</html>
